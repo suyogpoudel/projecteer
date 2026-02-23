@@ -35,7 +35,7 @@ const RegisterForm = () => {
     if (result.success) {
       toast.success("Registered Successfully");
       form.reset();
-      router.push(`/u/${data.username}`);
+      router.push(`/ideas`);
     }
   };
 
