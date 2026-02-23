@@ -7,13 +7,14 @@ const RegisterIllustration = () => {
   const { resolvedTheme } = useTheme();
 
   return (
-    <Image
-      src={`/images/illustration_register_${resolvedTheme}.svg`}
-      alt="Illustration"
-      width={300}
-      height={300}
-      className="w-[85%]"
-    />
+    <div className="w-[85%] max-w-md aspect-square mx-auto relative">
+      <Image
+        src={`/images/illustration_register_${resolvedTheme}.svg`}
+        alt="Login Illustration"
+        fill
+        style={{ objectFit: "contain" }}
+      />
+    </div>
   );
 };
 
