@@ -8,7 +8,7 @@ const Navbar = () => {
         href="/"
         className="text-xl text-primary font-mono font-semibold tracking-wider hover:text-primary/75 transition-colors duration-300"
       >
-        Projecter
+        Projecteer
       </Link>
 
       <ThemeToggle />
