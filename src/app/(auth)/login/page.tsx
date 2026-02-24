@@ -8,7 +8,7 @@ const Login = () => {
       <h1 className="font-sans font-extrabold text-3xl text-primary tracking-wider mb-10 text-center">
         Login to Projecteer
       </h1>
-      <div className="flex justify-center items-center max-md:flex-col gap-10 w-full">
+      <div className="flex justify-center items-center max-md:flex-col-reverse gap-10 w-full">
         <LoginIllustration />
         <div className="w-full max-w-md">
           <LoginForm />
