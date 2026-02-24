@@ -40,9 +40,11 @@ const RegisterForm = () => {
     }
 
     if (result.success) {
-      toast.success("Registered Successfully");
+      toast.success(
+        "Registered Successfully. Check your email to verify email",
+      );
       form.reset();
-      router.push(`/ideas`);
+      router.push(`/verify-email`);
     }
   };
 
