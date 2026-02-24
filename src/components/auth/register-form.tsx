@@ -85,8 +85,11 @@ const RegisterForm = () => {
               <FieldLabel htmlFor="username">Username</FieldLabel>
               <Input
                 {...field}
-                type="username"
+                type="text"
                 placeholder="johndoe_123"
+                inputMode="text"
+                autoCapitalize="none"
+                autoCorrect="off"
               />
               {fieldState.error && <FieldError errors={[fieldState.error]} />}
             </Field>

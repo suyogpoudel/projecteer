@@ -6,10 +6,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "../ui/field";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
+import SocialAuth from "./social-auth";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -30,7 +37,7 @@ const LoginForm = () => {
     }
 
     if (result.success) {
-      toast.success("Registered Successfully");
+      toast.success("Logged in successfully");
       form.reset();
       router.push("/ideas");
     }
@@ -84,6 +91,10 @@ const LoginForm = () => {
             "Login"
           )}
         </Button>
+
+        <FieldSeparator>Or continue with</FieldSeparator>
+
+        <SocialAuth />
       </FieldGroup>
     </form>
   );
