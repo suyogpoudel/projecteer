@@ -17,6 +17,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import SocialAuth from "./social-auth";
+import { authClient } from "@/lib/auth-client";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -43,6 +44,10 @@ const RegisterForm = () => {
       toast.success(
         "Registered Successfully. Check your email to verify email",
       );
+      authClient.sendVerificationEmail({
+        email: data.email,
+        callbackURL: "/ideas",
+      });
       form.reset();
       router.push(`/verify-email`);
     }

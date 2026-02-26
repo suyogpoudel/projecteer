@@ -19,7 +19,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
       await resend.emails.send({
-        from: `Verify <mail@suyogpoudel.com.np>`,
+        from: `Projecteer <mail@suyogpoudel.com.np>`,
         to: user.email,
         subject: "Verify your email",
         react: EmailVerification({ username: user.name, verifyUrl: url }),
@@ -27,6 +27,8 @@ export const auth = betterAuth({
     },
     requireEmailVerification: true,
     sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    expiresIn: 3600,
   },
   socialProviders: {
     github: {
