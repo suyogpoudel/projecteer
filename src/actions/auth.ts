@@ -1,12 +1,19 @@
 "use client";
 
+import { db } from "@/db/drizzle";
+import { user } from "@/db/schema";
+import { getSession } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
 import {
   LoginData,
   loginSchema,
   RegisterData,
   registerSchema,
+  UsernameData,
+  usernameSchema,
 } from "@/schemas/auth";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 export const registerUser = async (
   data: RegisterData,

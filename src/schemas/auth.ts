@@ -30,3 +30,16 @@ export const loginSchema = z.object({
 });
 
 export type LoginData = z.infer<typeof loginSchema>;
+
+export const usernameSchema = z.object({
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(
+      usernameRegex,
+      "Username can only contain lowercase letters, numbers, and underscores. It cannot start or end with an underscore or contain double underscores.",
+    ),
+});
+
+export type UsernameData = z.infer<typeof usernameSchema>;
