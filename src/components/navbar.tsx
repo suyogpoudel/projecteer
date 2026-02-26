@@ -2,6 +2,8 @@ import Link from "next/link";
 import ThemeToggle from "./theme-toggle";
 import { Separator } from "./ui/separator";
 import AuthLinks from "./auth-links";
+import NavLinks from "./nav-links";
+import SavedButton from "./saved-button";
 
 const Navbar = () => {
   return (
@@ -13,9 +15,11 @@ const Navbar = () => {
         Projecteer
       </Link>
 
-      <div className="flex items-center gap-2">
+      <NavLinks />
+
+      <div className="flex items-center gap-2 max-md:hidden">
         <AuthLinks />
-        <Separator orientation="vertical" />
+        <SavedButton />
         <ThemeToggle />
       </div>
     </div>
