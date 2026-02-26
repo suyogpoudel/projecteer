@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ThemeToggle from "./theme-toggle";
-import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
+import AuthLinks from "./auth-links";
 
 const Navbar = () => {
   return (
@@ -14,19 +14,7 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center gap-2">
-        <Button
-          asChild
-          size={"lg"}
-        >
-          <Link href={"/register"}>Register</Link>
-        </Button>
-        <Button
-          asChild
-          size={"lg"}
-          variant={"secondary"}
-        >
-          <Link href={"/login"}>Login</Link>
-        </Button>
+        <AuthLinks />
         <Separator orientation="vertical" />
         <ThemeToggle />
       </div>

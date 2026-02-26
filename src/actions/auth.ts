@@ -1,19 +1,12 @@
 "use client";
 
-import { db } from "@/db/drizzle";
-import { user } from "@/db/schema";
-import { getSession } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
 import {
   LoginData,
   loginSchema,
   RegisterData,
   registerSchema,
-  UsernameData,
-  usernameSchema,
 } from "@/schemas/auth";
-import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
 
 export const registerUser = async (
   data: RegisterData,
@@ -86,6 +79,21 @@ export const signInSocial = async (
         error instanceof Error
           ? error.message
           : `${provider.charAt(0).toUpperCase() + provider.slice(1)} authentication failed`,
+    };
+  }
+};
+
+export const logoutUser = async (): Promise<{
+  success: boolean;
+  message?: string;
+}> => {
+  try {
+    await authClient.signOut();
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Error logging out",
     };
   }
 };
