@@ -4,8 +4,11 @@ import { Separator } from "./ui/separator";
 import AuthLinks from "./auth-links";
 import NavLinks from "./nav-links";
 import SavedButton from "./saved-button";
+import { getSession } from "@/lib/auth";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const session = await getSession();
+
   return (
     <div className="flex justify-between bg-card text-card-foreground p-6 border-b border-border shadow-sm items-center">
       <Link
@@ -15,10 +18,10 @@ const Navbar = () => {
         Projecteer
       </Link>
 
-      <NavLinks />
+      <NavLinks session={session} />
 
       <div className="flex items-center gap-2 max-md:hidden">
-        <AuthLinks />
+        <AuthLinks session={session} />
         <SavedButton />
         <ThemeToggle />
       </div>
