@@ -100,7 +100,7 @@ const NavLinks = ({ session }: { session: any }) => {
                 duration: 0.3,
                 ease: "easeInOut",
               }}
-              className="md:hidden fixed top-0 right-0 z-50 w-[75%] h-screen bg-card shadow-sm border-l border-border px-5 py-10 flex flex-col justify-evenly"
+              className="md:hidden fixed top-0 right-0 z-50 w-[75%] h-screen bg-card shadow-sm border-l border-border px-5 flex flex-col justify-evenly"
             >
               <ul className="flex flex-col gap-10 items-center">
                 {renderLinks()}
