@@ -33,7 +33,7 @@ const Footer = () => {
         <p>
           Developed By:{" "}
           <Link
-            href={"https://suyogpoudel.com.np"}
+            href={"https://github.com/suyogpoudel/projecteer"}
             className="text-primary hover:underline underline-offset-4"
             target="_blank"
           >
