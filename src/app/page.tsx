@@ -22,7 +22,7 @@ const Home = () => {
           asChild
           size="lg"
         >
-          <Link href="/browse">Browse Ideas</Link>
+          <Link href="/ideas">Browse Ideas</Link>
         </Button>
         <Button
           asChild
