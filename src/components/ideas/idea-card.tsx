@@ -16,6 +16,7 @@ import { eq } from "drizzle-orm";
 import { ArrowBigUpDash, Star } from "lucide-react";
 import Link from "next/link";
 import Ratings from "./ratings";
+import TechStack from "./tech-stack";
 
 const IdeaCard = async () => {
   const projectsWithAuthor = await Promise.all(
@@ -98,19 +99,7 @@ const IdeaCard = async () => {
                   </ul>
                 </div>
 
-                <div className="flex flex-col max-md:w-full w-[85%]  gap-4 p-4 md:border-l max-md:border-t border-border">
-                  <p className="font-bold text-primary text-lg">Tech Stack</p>
-                  <div className="flex flex-wrap gap-3">
-                    {project.techStack.map((tech) => (
-                      <Badge
-                        key={tech}
-                        variant="secondary"
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+                <TechStack techStack={project.techStack} />
               </div>
 
               <Separator />
