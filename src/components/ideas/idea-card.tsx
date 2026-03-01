@@ -17,6 +17,7 @@ import { ArrowBigUpDash, Star } from "lucide-react";
 import Link from "next/link";
 import Ratings from "./ratings";
 import TechStack from "./tech-stack";
+import LearningValue from "./learning-value";
 
 const IdeaCard = async () => {
   const projectsWithAuthor = await Promise.all(
@@ -88,16 +89,7 @@ const IdeaCard = async () => {
               <Separator />
 
               <div className="w-full p-2 flex max-md:flex-col gap-4">
-                <div className="w-full p-2 flex flex-col gap-4">
-                  <p className="font-bold text-primary text-lg">
-                    Learning Value
-                  </p>
-                  <ul className="list-disc list-inside flex flex-col gap-2">
-                    {project.learningValue.map((value) => (
-                      <li key={value}>{value}</li>
-                    ))}
-                  </ul>
-                </div>
+                <LearningValue learningValue={project.learningValue} />
 
                 <TechStack techStack={project.techStack} />
               </div>
