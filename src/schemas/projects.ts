@@ -4,7 +4,7 @@ const requiredString = (name: string) =>
   z.string().trim().min(1, `${name} is required`);
 
 const rating = (name: string) =>
-  z.coerce.number().int().min(1, `${name} rating is required`).max(5);
+  z.number().int().min(1, `${name} rating is required`).max(5);
 
 export const projectSchema = z.object({
   title: requiredString("Title")
