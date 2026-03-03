@@ -33,7 +33,7 @@ const RatingDescription = ({ name, label, control }: Props) => {
             <InputGroupTextarea
               id={name}
               {...field}
-              rows={6}
+              rows={3}
               placeholder={`Describe your ${label}`}
               className="resize-y"
             />
