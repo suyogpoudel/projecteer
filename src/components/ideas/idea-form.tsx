@@ -17,6 +17,7 @@ import { InputGroup, InputGroupTextarea } from "../ui/input-group";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import StarRating from "./star-rating";
+import RatingForm from "./rating-form";
 
 const formDefault = {
   title: "",
@@ -116,23 +117,10 @@ const IdeaForm = () => {
           )}
         />
 
-        <Controller
-          name="difficultyRating"
+        <RatingForm
           control={form.control}
-          render={({ field, fieldState }) => (
-            <FieldSet>
-              <div className="flex w-full justify-between">
-                <FieldLegend>Difficulty Rating</FieldLegend>
-
-                <StarRating
-                  value={field.value}
-                  onChange={(value) => field.onChange(value)}
-                />
-              </div>
-
-              {fieldState.error && <FieldError errors={[fieldState.error]} />}
-            </FieldSet>
-          )}
+          name="difficultyRating"
+          label="Difficulty Rating"
         />
       </FieldGroup>
     </form>

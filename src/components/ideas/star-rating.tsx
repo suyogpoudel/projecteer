@@ -24,7 +24,7 @@ const StarRating = ({ value, onChange }: Props) => {
             "w-7 h-7 cursor-pointer transition duration-300",
             val <= (hover || value)
               ? "fill-yellow-400 text-yellow-400"
-              : "text-muted-foreground",
+              : "fill-muted-foreground text-muted-foreground",
           )}
         />
       ))}
