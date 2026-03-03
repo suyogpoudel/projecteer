@@ -3,21 +3,11 @@
 import { ProjectData, projectSchema } from "@/schemas/projects";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  FieldLegend,
-  FieldSet,
-} from "../ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
 import { InputGroup, InputGroupTextarea } from "../ui/input-group";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Label } from "../ui/label";
-import StarRating from "./star-rating";
-import RatingForm from "./rating-form";
+import RatingForm, { RatingField } from "./rating-form";
+import RatingDescription, { DescriptionName } from "./rating-description";
 
 const formDefault = {
   title: "",
@@ -34,6 +24,35 @@ const formDefault = {
   techStack: [""],
   learningValue: [""],
 };
+
+type Rating = {
+  name: RatingField;
+  description: DescriptionName;
+  label: string;
+};
+
+const ratings: Rating[] = [
+  {
+    name: "difficultyRating",
+    description: "difficultyDescription",
+    label: "Difficulty Rating",
+  },
+  {
+    name: "usabilityRating",
+    description: "usabilityDescription",
+    label: "Usability Rating",
+  },
+  {
+    name: "hireabilityRating",
+    description: "hireabilityDescription",
+    label: "Hireability Rating",
+  },
+  {
+    name: "absurdityRating",
+    description: "absurdityDescription",
+    label: "Absurdity Rating",
+  },
+];
 
 const IdeaForm = () => {
   const form = useForm<ProjectData>({
@@ -83,7 +102,7 @@ const IdeaForm = () => {
               </FieldLabel>
               <InputGroup>
                 <InputGroupTextarea
-                  id="title"
+                  id="description"
                   {...field}
                   rows={6}
                   placeholder="Enter the title"
@@ -117,11 +136,24 @@ const IdeaForm = () => {
           )}
         />
 
-        <RatingForm
-          control={form.control}
-          name="difficultyRating"
-          label="Difficulty Rating"
-        />
+        {ratings.map(({ name, description, label }) => (
+          <div
+            key={name}
+            className="flex flex-col gap-7"
+          >
+            <RatingForm
+              control={form.control}
+              name={name}
+              label={label}
+            />
+
+            <RatingDescription
+              name={description}
+              label={`${label} Description`}
+              control={form.control}
+            />
+          </div>
+        ))}
       </FieldGroup>
     </form>
   );

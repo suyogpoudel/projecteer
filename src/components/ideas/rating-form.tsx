@@ -1,16 +1,9 @@
 import { Control, Controller } from "react-hook-form";
-import {
-  FieldSet,
-  FieldLegend,
-  FieldError,
-  Field,
-  FieldLabel,
-} from "../ui/field";
+import { FieldSet, FieldLegend, FieldError } from "../ui/field";
 import StarRating from "./star-rating";
 import { ProjectData } from "@/schemas/projects";
-import { InputGroup, InputGroupTextarea } from "../ui/input-group";
 
-type RatingField =
+export type RatingField =
   | "difficultyRating"
   | "hireabilityRating"
   | "usabilityRating"
@@ -30,7 +23,7 @@ const RatingForm = ({ name, label, control }: Props) => {
       render={({ field, fieldState }) => (
         <FieldSet>
           <div className="flex w-full justify-between">
-            <FieldLegend>${label}</FieldLegend>
+            <FieldLegend>{label}</FieldLegend>
 
             <StarRating
               value={field.value}
