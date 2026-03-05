@@ -3,13 +3,22 @@
 import { ProjectData, projectSchema } from "@/schemas/projects";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "../ui/field";
 import { Input } from "../ui/input";
 import { InputGroup, InputGroupTextarea } from "../ui/input-group";
 import RatingForm, { RatingField } from "./rating-form";
 import RatingDescription, { DescriptionName } from "./rating-description";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { Button } from "../ui/button";
 
-const formDefault = {
+const formDefault: ProjectData = {
   title: "",
   description: "",
   hook: "",
@@ -55,12 +64,31 @@ const ratings: Rating[] = [
 ];
 
 const IdeaForm = () => {
+  const [techStackInput, setTechStackInput] = useState(
+    formDefault.techStack.join(", "),
+  );
+  const [learningValueInput, setLearningValueInput] = useState(
+    formDefault.learningValue.join("\n"),
+  );
+
   const form = useForm<ProjectData>({
     resolver: zodResolver(projectSchema),
     defaultValues: formDefault,
   });
 
-  const onSubmit = async (data: ProjectData) => {};
+  const onSubmit = async (data: ProjectData) => {
+    const formattedData = {
+      ...data,
+      techStack: techStackInput
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+      learningValue: learningValueInput
+        .split("\n")
+        .map((l) => l.trim())
+        .filter(Boolean),
+    };
+  };
 
   return (
     <form
@@ -89,6 +117,7 @@ const IdeaForm = () => {
             </Field>
           )}
         />
+
         <Controller
           name="description"
           control={form.control}
@@ -154,6 +183,77 @@ const IdeaForm = () => {
             />
           </div>
         ))}
+
+        <Controller
+          name="techStack"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field>
+              <FieldLabel
+                htmlFor="techStack"
+                className="px-2"
+              >
+                Tech Stack
+              </FieldLabel>
+              <Input
+                type="text"
+                id="techStack"
+                {...field}
+                value={techStackInput}
+                onChange={(e) => {
+                  field.onChange(e);
+                  setTechStackInput(e.target.value);
+                }}
+                placeholder="Enter the tech stack"
+              />
+              <FieldDescription>
+                Separate each item with a comma (Eg: React, Next.js)
+              </FieldDescription>
+              {fieldState.error && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="learningValue"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field>
+              <FieldLabel
+                htmlFor="learningValue"
+                className="px-2"
+              >
+                Description
+              </FieldLabel>
+              <InputGroup>
+                <InputGroupTextarea
+                  id="learningValue"
+                  {...field}
+                  rows={8}
+                  value={learningValueInput}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    setLearningValueInput(e.target.value);
+                  }}
+                  placeholder={`Write one learning point per line.\nPress Enter to add a new point.\n\nExample:\nUnderstand JWT authentication\nLearn database relationships\nPractice API design`}
+                  className="resize-y"
+                />
+              </InputGroup>
+              {fieldState.error && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Button
+          type="submit"
+          disabled={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            "Create Project"
+          )}
+        </Button>
       </FieldGroup>
     </form>
   );
