@@ -17,6 +17,9 @@ import RatingDescription, { DescriptionName } from "./rating-description";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
+import { addProject } from "@/actions/project";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formDefault: ProjectData = {
   title: "",
@@ -64,6 +67,8 @@ const ratings: Rating[] = [
 ];
 
 const IdeaForm = () => {
+  const router = useRouter();
+
   const [techStackInput, setTechStackInput] = useState(
     formDefault.techStack.join(", "),
   );
@@ -88,6 +93,18 @@ const IdeaForm = () => {
         .map((l) => l.trim())
         .filter(Boolean),
     };
+
+    const result = await addProject(formattedData);
+
+    if (!result.success) {
+      toast.error(result.message);
+    }
+
+    if (result.success) {
+      toast.success(result.message);
+      form.reset();
+      router.push(`/ideas`);
+    }
   };
 
   return (
