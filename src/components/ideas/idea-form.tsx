@@ -82,19 +82,7 @@ const IdeaForm = () => {
   });
 
   const onSubmit = async (data: ProjectData) => {
-    const formattedData = {
-      ...data,
-      techStack: techStackInput
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-      learningValue: learningValueInput
-        .split("\n")
-        .map((l) => l.trim())
-        .filter(Boolean),
-    };
-
-    const result = await addProject(formattedData);
+    const result = await addProject(data);
 
     if (!result.success) {
       toast.error(result.message);
@@ -217,9 +205,13 @@ const IdeaForm = () => {
                 id="techStack"
                 {...field}
                 value={techStackInput}
-                onChange={(e) => {
-                  field.onChange(e);
-                  setTechStackInput(e.target.value);
+                onChange={(e) => setTechStackInput(e.target.value)}
+                onBlur={() => {
+                  const arr = techStackInput
+                    .split(",")
+                    .map((t) => t.trim())
+                    .filter(Boolean);
+                  field.onChange(arr);
                 }}
                 placeholder="Enter the tech stack"
               />
@@ -249,8 +241,14 @@ const IdeaForm = () => {
                   rows={8}
                   value={learningValueInput}
                   onChange={(e) => {
-                    field.onChange(e);
                     setLearningValueInput(e.target.value);
+                  }}
+                  onBlur={() => {
+                    const arr = learningValueInput
+                      .split("\n")
+                      .map((v) => v.trim())
+                      .filter(Boolean);
+                    field.onChange(arr);
                   }}
                   placeholder={`Write one learning point per line.\nPress Enter to add a new point.\n\nExample:\nUnderstand JWT authentication\nLearn database relationships\nPractice API design`}
                   className="resize-y"
