@@ -16,6 +16,7 @@ import Link from "next/link";
 import Ratings from "./ratings";
 import TechStack from "./tech-stack";
 import LearningValue from "./learning-value";
+import UpvoteButton from "./upvote-button";
 
 const IdeaCard = async () => {
   const projectsWithAuthor = await db
@@ -90,20 +91,10 @@ const IdeaCard = async () => {
             </CardContent>
 
             <CardFooter className="flex justify-between">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={"outline"}
-                  size={"icon"}
-                >
-                  <ArrowBigUpDash />
-                </Button>
-                <p>
-                  <span className="text-primary text-lg font-bold">
-                    {project.upvotes}
-                  </span>{" "}
-                  Upvotes
-                </p>
-              </div>
+              <UpvoteButton
+                project={project}
+                user={user}
+              />
 
               <div className="flex items-center gap-2">
                 <p>
