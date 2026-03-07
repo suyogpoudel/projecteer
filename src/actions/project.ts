@@ -1,9 +1,10 @@
 "use server";
 
 import { db } from "@/db/drizzle";
-import { project } from "@/db/schema";
+import { project, projectUpvote } from "@/db/schema";
 import { getSession } from "@/lib/auth";
 import { ProjectData, projectSchema } from "@/schemas/projects";
+import { and, eq, sql } from "drizzle-orm";
 
 export const addProject = async (
   data: ProjectData,
@@ -40,7 +41,88 @@ export const addProject = async (
   } catch (err) {
     return {
       success: false,
-      message: "Failed to create idea",
+      message: err instanceof Error ? err.message : "Couldn't create Project",
+    };
+  }
+};
+
+export const upvoteProject = async (
+  id: string,
+): Promise<{ success: boolean; message?: string }> => {
+  const session = await getSession();
+
+  if (!session) {
+    return {
+      success: false,
+      message: "User not logged in",
+    };
+  }
+
+  if (!id) {
+    return {
+      success: false,
+      message: "Please provide a project id",
+    };
+  }
+
+  try {
+    const [requiredProject] = await db
+      .select({ id: project.id })
+      .from(project)
+      .where(eq(project.id, id));
+
+    if (!requiredProject) {
+      return {
+        success: false,
+        message: "Project doesn't exist",
+      };
+    }
+
+    await db.transaction(async (tx) => {
+      const [existing] = await tx
+        .select({ id: projectUpvote.id })
+        .from(projectUpvote)
+        .where(
+          and(
+            eq(projectUpvote.userId, session.user.id),
+            eq(projectUpvote.projectId, id),
+          ),
+        );
+
+      if (existing) {
+        await tx
+          .delete(projectUpvote)
+          .where(
+            and(
+              eq(projectUpvote.userId, session.user.id),
+              eq(projectUpvote.projectId, id),
+            ),
+          );
+
+        await tx
+          .update(project)
+          .set({ upvotes: sql`GREATEST(${project.upvotes} - 1, 0)` })
+          .where(eq(project.id, id));
+      } else {
+        await tx.insert(projectUpvote).values({
+          userId: session.user.id,
+          projectId: id,
+        });
+
+        await tx
+          .update(project)
+          .set({ upvotes: sql`${project.upvotes} + 1` })
+          .where(eq(project.id, id));
+      }
+    });
+
+    return {
+      success: true,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: err instanceof Error ? err.message : "Error adding upvote",
     };
   }
 };
