@@ -69,6 +69,27 @@ export const savedProject = pgTable(
   }),
 );
 
+// upvote table
+export const projectUpvote = pgTable(
+  "project_upvote",
+  {
+    id: uuid("id").primaryKey().defaultRandom().notNull(),
+
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => project.id, { onDelete: "cascade" }),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    user_project_unique: unique().on(table.userId, table.projectId),
+  }),
+);
+
 // Relations
 export const projectRelations = relations(project, ({ one, many }) => ({
   user: one(user, {
@@ -76,6 +97,7 @@ export const projectRelations = relations(project, ({ one, many }) => ({
     references: [user.id],
   }),
   savedBy: many(savedProject),
+  upvotedBy: many(projectUpvote),
 }));
 
 export const savedProjectRelations = relations(savedProject, ({ one }) => ({
@@ -85,6 +107,17 @@ export const savedProjectRelations = relations(savedProject, ({ one }) => ({
   }),
   project: one(project, {
     fields: [savedProject.projectId],
+    references: [project.id],
+  }),
+}));
+
+export const projectUpvoteRelations = relations(projectUpvote, ({ one }) => ({
+  user: one(user, {
+    fields: [projectUpvote.userId],
+    references: [user.id],
+  }),
+  project: one(project, {
+    fields: [projectUpvote.projectId],
     references: [project.id],
   }),
 }));
