@@ -10,7 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db/drizzle";
 import { project, user } from "@/db/schema";
-import { eq, getTableColumns } from "drizzle-orm";
+import { desc, eq, getTableColumns } from "drizzle-orm";
 import { ArrowBigUpDash, Star } from "lucide-react";
 import Link from "next/link";
 import Ratings from "./ratings";
@@ -21,7 +21,8 @@ const IdeaCard = async () => {
   const projectsWithAuthor = await db
     .select({ ...getTableColumns(project), username: user.username })
     .from(project)
-    .leftJoin(user, eq(project.userId, user.id));
+    .leftJoin(user, eq(project.userId, user.id))
+    .orderBy(desc(project.updatedAt));
 
   return (
     <div className="flex flex-col gap-10 md:w-[50%]">
