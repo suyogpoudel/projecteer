@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,9 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db/drizzle";
-import { user } from "@/db/schema";
-import { mockProjects } from "@/lib/mock-projects";
-import { eq } from "drizzle-orm";
+import { project, user } from "@/db/schema";
+import { eq, getTableColumns } from "drizzle-orm";
 import { ArrowBigUpDash, Star } from "lucide-react";
 import Link from "next/link";
 import Ratings from "./ratings";
@@ -20,21 +18,10 @@ import TechStack from "./tech-stack";
 import LearningValue from "./learning-value";
 
 const IdeaCard = async () => {
-  const projectsWithAuthor = await Promise.all(
-    mockProjects.map(async (project) => {
-      const [author] = await db
-        .select()
-        .from(user)
-        .where(eq(user.id, project.userId));
-
-      const username = author?.username || "unknown";
-
-      return {
-        ...project,
-        username,
-      };
-    }),
-  );
+  const projectsWithAuthor = await db
+    .select({ ...getTableColumns(project), username: user.username })
+    .from(project)
+    .leftJoin(user, eq(project.userId, user.id));
 
   return (
     <div className="flex flex-col gap-10 md:w-[50%]">
