@@ -9,18 +9,38 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db/drizzle";
-import { project, user } from "@/db/schema";
-import { desc, eq, getTableColumns } from "drizzle-orm";
-import { ArrowBigUpDash, Star } from "lucide-react";
+import { project, projectUpvote, user } from "@/db/schema";
+import { desc, eq, exists, getTableColumns, and, sql } from "drizzle-orm";
+import { Star } from "lucide-react";
 import Link from "next/link";
 import Ratings from "./ratings";
 import TechStack from "./tech-stack";
 import LearningValue from "./learning-value";
 import UpvoteButton from "./upvote-button";
+import { getSession } from "@/lib/auth";
 
 const IdeaCard = async () => {
+  const session = await getSession();
+  const userId = session?.user.id;
+
   const projectsWithAuthor = await db
-    .select({ ...getTableColumns(project), username: user.username })
+    .select({
+      ...getTableColumns(project),
+      username: user.username,
+      hasUpvoted: userId
+        ? exists(
+            db
+              .select()
+              .from(projectUpvote)
+              .where(
+                and(
+                  eq(projectUpvote.projectId, project.id),
+                  eq(projectUpvote.userId, userId),
+                ),
+              ),
+          )
+        : sql<boolean>`false`,
+    })
     .from(project)
     .leftJoin(user, eq(project.userId, user.id))
     .orderBy(desc(project.updatedAt));
@@ -92,8 +112,9 @@ const IdeaCard = async () => {
 
             <CardFooter className="flex justify-between">
               <UpvoteButton
-                project={project}
-                user={user}
+                projectId={project.id}
+                initialUpvotes={project.upvotes}
+                hasUpvoted={!!project.hasUpvoted}
               />
 
               <div className="flex items-center gap-2">

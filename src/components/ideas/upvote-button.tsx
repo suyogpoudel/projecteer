@@ -3,7 +3,13 @@
 import { ArrowBigUpDash } from "lucide-react";
 import { Button } from "../ui/button";
 
-const UpvoteButton = ({ project, user }: { project: any; user: any }) => {
+type Props = {
+  projectId: string;
+  initialUpvotes: number;
+  hasUpvoted: boolean;
+};
+
+const UpvoteButton = ({ projectId, initialUpvotes, hasUpvoted }: Props) => {
   return (
     <div className="flex items-center gap-2">
       <Button
@@ -13,9 +19,7 @@ const UpvoteButton = ({ project, user }: { project: any; user: any }) => {
         <ArrowBigUpDash />
       </Button>
       <p>
-        <span className="text-primary text-lg font-bold">
-          {project.upvotes}
-        </span>{" "}
+        <span className="text-primary text-lg font-bold">{initialUpvotes}</span>{" "}
         Upvotes
       </p>
     </div>
