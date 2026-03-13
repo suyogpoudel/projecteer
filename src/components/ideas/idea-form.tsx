@@ -232,7 +232,7 @@ const IdeaForm = () => {
                 htmlFor="learningValue"
                 className="px-2"
               >
-                Description
+                Learning Value
               </FieldLabel>
               <InputGroup>
                 <InputGroupTextarea

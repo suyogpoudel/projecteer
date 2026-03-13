@@ -5,6 +5,7 @@ import { project, projectUpvote } from "@/db/schema";
 import { getSession } from "@/lib/auth";
 import { ProjectData, projectSchema } from "@/schemas/projects";
 import { and, eq, sql } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const addProject = async (
   data: ProjectData,
@@ -78,10 +79,19 @@ export const upvoteProject = async (
       };
     }
 
-    await db.transaction(async (tx) => {
-      const [existing] = await tx
-        .select({ id: projectUpvote.id })
-        .from(projectUpvote)
+    const [existing] = await db
+      .select({ id: projectUpvote.id })
+      .from(projectUpvote)
+      .where(
+        and(
+          eq(projectUpvote.userId, session.user.id),
+          eq(projectUpvote.projectId, id),
+        ),
+      );
+
+    if (existing) {
+      await db
+        .delete(projectUpvote)
         .where(
           and(
             eq(projectUpvote.userId, session.user.id),
@@ -89,32 +99,25 @@ export const upvoteProject = async (
           ),
         );
 
-      if (existing) {
-        await tx
-          .delete(projectUpvote)
-          .where(
-            and(
-              eq(projectUpvote.userId, session.user.id),
-              eq(projectUpvote.projectId, id),
-            ),
-          );
+      await db
+        .update(project)
+        .set({ upvotes: sql`GREATEST(${project.upvotes} - 1, 0)` })
+        .where(eq(project.id, id));
 
-        await tx
-          .update(project)
-          .set({ upvotes: sql`GREATEST(${project.upvotes} - 1, 0)` })
-          .where(eq(project.id, id));
-      } else {
-        await tx.insert(projectUpvote).values({
-          userId: session.user.id,
-          projectId: id,
-        });
+      revalidatePath("/ideas");
+    } else {
+      await db.insert(projectUpvote).values({
+        userId: session.user.id,
+        projectId: id,
+      });
 
-        await tx
-          .update(project)
-          .set({ upvotes: sql`${project.upvotes} + 1` })
-          .where(eq(project.id, id));
-      }
-    });
+      await db
+        .update(project)
+        .set({ upvotes: sql`${project.upvotes} + 1` })
+        .where(eq(project.id, id));
+
+      revalidatePath("/ideas");
+    }
 
     return {
       success: true,
