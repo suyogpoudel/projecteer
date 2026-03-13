@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db/drizzle";
-import { project, projectUpvote, user } from "@/db/schema";
+import { project, projectUpvote, savedProject, user } from "@/db/schema";
 import { desc, eq, exists, getTableColumns, and, sql } from "drizzle-orm";
 import { Star } from "lucide-react";
 import Link from "next/link";
@@ -27,22 +27,24 @@ const IdeaCard = async () => {
     .select({
       ...getTableColumns(project),
       username: user.username,
-      hasUpvoted: userId
-        ? exists(
-            db
-              .select()
-              .from(projectUpvote)
-              .where(
-                and(
-                  eq(projectUpvote.projectId, project.id),
-                  eq(projectUpvote.userId, userId),
-                ),
-              ),
-          )
-        : sql<boolean>`false`,
+      hasUpvoted: projectUpvote.id,
     })
     .from(project)
     .leftJoin(user, eq(project.userId, user.id))
+    .leftJoin(
+      projectUpvote,
+      and(
+        eq(projectUpvote.projectId, project.id),
+        userId ? eq(projectUpvote.userId, userId) : sql`false`,
+      ),
+    )
+    .leftJoin(
+      savedProject,
+      and(
+        eq(savedProject.projectId, project.id),
+        userId ? eq(savedProject.userId, userId) : sql`false`,
+      ),
+    )
     .orderBy(desc(project.updatedAt));
 
   return (

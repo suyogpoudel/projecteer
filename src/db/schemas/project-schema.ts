@@ -36,6 +36,7 @@ export const project = pgTable("project", {
   learningValue: text("learning_value").array().notNull().$type<string[]>(),
 
   upvotes: integer("upvotes").notNull().default(0),
+  saves: integer("saves").notNull().default(0),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
