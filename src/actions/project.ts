@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/drizzle";
-import { project, projectUpvote } from "@/db/schema";
+import { project, projectUpvote, savedProject } from "@/db/schema";
 import { getSession } from "@/lib/auth";
 import { ProjectData, projectSchema } from "@/schemas/projects";
 import { and, eq, sql } from "drizzle-orm";
@@ -103,8 +103,6 @@ export const upvoteProject = async (
         .update(project)
         .set({ upvotes: sql`GREATEST(${project.upvotes} - 1, 0)` })
         .where(eq(project.id, id));
-
-      revalidatePath("/ideas");
     } else {
       await db.insert(projectUpvote).values({
         userId: session.user.id,
@@ -115,9 +113,8 @@ export const upvoteProject = async (
         .update(project)
         .set({ upvotes: sql`${project.upvotes} + 1` })
         .where(eq(project.id, id));
-
-      revalidatePath("/ideas");
     }
+    revalidatePath("/ideas");
 
     return {
       success: true,
@@ -126,6 +123,86 @@ export const upvoteProject = async (
     return {
       success: false,
       message: err instanceof Error ? err.message : "Error adding upvote",
+    };
+  }
+};
+
+export const saveProject = async (
+  id: string,
+): Promise<{ success: boolean; message?: string }> => {
+  const session = await getSession();
+
+  if (!session) {
+    return {
+      success: false,
+      message: "User not logged in",
+    };
+  }
+
+  if (!id) {
+    return {
+      success: false,
+      message: "Please provide a project id",
+    };
+  }
+
+  try {
+    const [requiredProject] = await db
+      .select({ id: project.id })
+      .from(project)
+      .where(eq(project.id, id));
+
+    if (!requiredProject) {
+      return {
+        success: false,
+        message: "Project doesn't exist",
+      };
+    }
+
+    const [existing] = await db
+      .select({ id: savedProject.id })
+      .from(savedProject)
+      .where(
+        and(
+          eq(savedProject.userId, session.user.id),
+          eq(savedProject.projectId, id),
+        ),
+      );
+
+    if (existing) {
+      await db
+        .delete(savedProject)
+        .where(
+          and(
+            eq(savedProject.userId, session.user.id),
+            eq(savedProject.projectId, id),
+          ),
+        );
+
+      await db
+        .update(project)
+        .set({ saves: sql`GREATEST(${project.saves} - 1, 0)` })
+        .where(eq(project.id, id));
+    } else {
+      await db.insert(savedProject).values({
+        userId: session.user.id,
+        projectId: id,
+      });
+
+      await db
+        .update(project)
+        .set({ saves: sql`${project.saves} + 1` })
+        .where(eq(project.id, id));
+    }
+    revalidatePath("/ideas");
+
+    return {
+      success: true,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: err instanceof Error ? err.message : "Error saving project",
     };
   }
 };

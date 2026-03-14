@@ -18,6 +18,7 @@ import TechStack from "./tech-stack";
 import LearningValue from "./learning-value";
 import UpvoteButton from "./upvote-button";
 import { getSession } from "@/lib/auth";
+import SaveButton from "./save-button";
 
 const IdeaCard = async () => {
   const session = await getSession();
@@ -28,6 +29,7 @@ const IdeaCard = async () => {
       ...getTableColumns(project),
       username: user.username,
       hasUpvoted: projectUpvote.id,
+      hasSaved: savedProject.id,
     })
     .from(project)
     .leftJoin(user, eq(project.userId, user.id))
@@ -119,18 +121,11 @@ const IdeaCard = async () => {
                 hasUpvoted={!!project.hasUpvoted}
               />
 
-              <div className="flex items-center gap-2">
-                <p>
-                  <span className="text-primary text-lg font-bold">0</span>{" "}
-                  Saved
-                </p>
-                <Button
-                  variant={"outline"}
-                  size={"icon"}
-                >
-                  <Star />
-                </Button>
-              </div>
+              <SaveButton
+                projectId={project.id}
+                initialSaves={project.saves}
+                hasSaved={!!project.hasSaved}
+              />
             </CardFooter>
           </Card>
         );
